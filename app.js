@@ -1,19 +1,19 @@
+//INIT APP BY EXPRESSJS
 const express = require('express')
 const mongoose = require('mongoose')
 
-//mongodb - mongodb+srv://srv:pVxzFihO1OJ72MOl@cluster0.n8eb8.mongodb.net/tododb?retryWrites=true&w=majority
 const app = express()
 const PORT = 5000
 
-//MONGODB CONNECT
+//MONGODB CONNECT by mongoose
 mongoose.connect('mongodb+srv://srv:pVxzFihO1OJ72MOl@cluster0.n8eb8.mongodb.net/tododb?retryWrites=true&w=majority')
 
-//IF MONGOOSE CONNECTED
+//IF MONGOOSE CONNECTED LOG TO CONNECTED
 mongoose.connection.on('connected', () => {
     console.log('Connected to mongo');
 })
 
-//IF MONGOOSE NOT CONNECTED DUE TO ERROR
+//IF MONGOOSE NOT CONNECTED DUE TO ERROR, LOG THE ERROR
 mongoose.connection.on('error', (err) => {
     console.log('Error', err);
 })
