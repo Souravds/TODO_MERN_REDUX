@@ -2,7 +2,10 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
+
 const User = require('./models/user')
+const JWT_SERCRET = 'fsefsdfsdfsdfsdf123'
 
 const app = express()
 const PORT = 5000
@@ -28,7 +31,7 @@ app.post('/signup', async ( req, res ) => {
     //RECIEVE FRONT_END USER REQ IN JSON FORMAT AND DESTRUCTURING
     const {email,password} = req.body
     try {
-        //USER EXISTS
+        //FIELD VALIDATION
         if(!email || !password){
             return res.status(422).json({error: 'Please fill up all the required fields.'})
         }
@@ -48,6 +51,42 @@ app.post('/signup', async ( req, res ) => {
             password: hashedPassword
         }).save()
         res.status(200).json({message: 'SignUp successfully.'})
+    } catch (error) {
+        console.log(error);
+    } 
+    
+})
+
+//USER SIGNIN
+app.post('/signin', async ( req, res ) => {
+    //RECIEVE FRONT_END USER REQ IN JSON FORMAT AND DESTRUCTURING
+    const {email,password} = req.body
+    try {
+        //FIELD VALIDATION
+        if(!email || !password){
+            return res.status(422).json({error: 'Please fill up all the required fields.'})
+        }
+
+        //CHECK EXISTING USER
+        const existUser = await User.findOne({email})
+        if(!existUser){
+            return res.status(404).json({error: 'User does not exist with this email!!'})
+        }
+
+        //MATCH THE USER PASSWORD
+        const matchPassword = await bcrypt.compare(password, existUser.password)
+
+        if (matchPassword) { 
+            //TOKEN GENERATE FOR SIGNED USER
+            const token = jwt.sign({userId: existUser._id}, JWT_SERCRET)
+
+            //RESPONSE WITH TOKEN
+            res.status(201).json({token})
+        } else {
+
+            //UNAUTHORIZED ERROR
+            return res.status(401).json({error: 'Email or Password does not match.'})
+        }
     } catch (error) {
         console.log(error);
     } 
