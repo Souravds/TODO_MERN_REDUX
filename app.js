@@ -1,6 +1,8 @@
 //INIT APP BY EXPRESSJS
 const express = require('express')
 const mongoose = require('mongoose')
+const bcrypt = require('bcryptjs')
+const User = require('./models/user')
 
 const app = express()
 const PORT = 5000
@@ -18,9 +20,38 @@ mongoose.connection.on('error', (err) => {
     console.log('Error', err);
 })
 
-//WHEN REQUEST IN ROOT ROUTE
-app.get('/', ( req,res ) => {
-    res.json({message: 'Helloooo'})
+//BEFORE GOING THROUGH THE SIGNUP AND SIGNIN PROCESS THIS MIDDLEWARE PARSED ALL THINGS IN JSON
+app.use(express.json())
+
+//GET SIGNUP REQ FROM FRONT_END
+app.post('/signup', async ( req, res ) => {
+    //RECIEVE FRONT_END USER REQ IN JSON FORMAT AND DESTRUCTURING
+    const {email,password} = req.body
+    try {
+        //USER EXISTS
+        if(!email || !password){
+            return res.status(422).json({error: 'Please fill up all the required fields.'})
+        }
+
+        //CHECK EXISTING USER
+        const existingUser = await User.findOne({email})
+        if(existingUser){
+            res.status(422).json({error: 'User already exists with this email'})
+        }
+
+        //HASH THE PASSWORD
+        const hashedPassword = await bcrypt.hash(password,12)
+
+        //SAVE THE USER ( -.- )
+        await new User({
+            email,
+            password: hashedPassword
+        }).save()
+        res.status(200).json({message: 'SignUp successfully.'})
+    } catch (error) {
+        console.log(error);
+    } 
+    
 })
 
 //INITIALIZE IN WHICH PORT APP CAN LISTEN
