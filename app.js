@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 const User = require('./models/user')
+const Todo = require('./models/todo')
 const JWT_SERCRET = 'fsefsdfsdfsdfsdf123'
 
 const app = express()
@@ -52,6 +53,32 @@ app.get('/test',requiredLogin,(req,res) => {
     res.json({userId: req.userId})
 })
 
+
+//CREATE TODO ROUTES
+app.post('/createtodo', requiredLogin,async (req, res) => {
+    //CREATE AND SAVE THE TODO
+    const createdTodo = await new Todo({
+        todo: req.body.todo,
+        todoBy: req.userId
+    }).save()
+    
+    res.status(201).json({message : createdTodo})
+})
+
+//GET ALL TODOS
+app.get('/gettodos', requiredLogin, async (req, res) => {
+    //MATCH THE USERID AND GET ALL TODOS
+    const todos = await Todo.find({
+        todoBy: req.userId
+    })
+    res.status(200).json({message: todos})
+})
+
+//DELETE TODO ROUTE
+app.delete('/deletetodo/:id',requiredLogin, async (req,res) => {
+    const removeTodo = await Todo.findOneAndDelete({_id: req.params.id})
+    res.status(200).json({message: removeTodo})
+})
 
 //SIGNUP ROUTE
 app.post('/signup', async ( req, res ) => {
