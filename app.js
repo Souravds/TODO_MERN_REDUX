@@ -26,7 +26,34 @@ mongoose.connection.on('error', (err) => {
 //BEFORE GOING THROUGH THE SIGNUP AND SIGNIN PROCESS THIS MIDDLEWARE PARSED ALL THINGS IN JSON
 app.use(express.json())
 
-//GET SIGNUP REQ FROM FRONT_END
+//MIDDLEWARE TO DETECT IF THE USER IS LOGIN OR NOT
+const requiredLogin = (req, res, next) => {
+    //DESTRUCTURE TOKEN FROM HEADERS 
+    const { authorization } = req.headers
+     if(!authorization){
+        return res.status(401).json({error: 'You must be logged in.'})
+     }
+
+     //IF THE TOKEN IS INVALID OR NOT
+     try{
+         //DECODE THE USERID
+         const {userId} = jwt.verify(authorization, JWT_SERCRET)
+         
+         //SET THE REQ USER IF FOUND
+         req.userId = userId
+         next()
+     }catch(error){
+        return res.status(401).json({error: 'You must be logged in.'})
+     }
+}
+
+//JUST A TEST IF THE HEADERS HAVE VALIDATED TOKEN OR NOT
+app.get('/test',requiredLogin,(req,res) => {
+    res.json({userId: req.userId})
+})
+
+
+//SIGNUP ROUTE
 app.post('/signup', async ( req, res ) => {
     //RECIEVE FRONT_END USER REQ IN JSON FORMAT AND DESTRUCTURING
     const {email,password} = req.body
@@ -57,7 +84,7 @@ app.post('/signup', async ( req, res ) => {
     
 })
 
-//USER SIGNIN
+//SIGNIN ROUTE
 app.post('/signin', async ( req, res ) => {
     //RECIEVE FRONT_END USER REQ IN JSON FORMAT AND DESTRUCTURING
     const {email,password} = req.body
