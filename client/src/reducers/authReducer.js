@@ -29,11 +29,25 @@ export const signupUser = createAsyncThunk(
     }   
 )
 
+//signin action creator
+export const signinUser = createAsyncThunk(
+    'signinuser',
+    async (body) => {
+        const result = await fetch2point0('/signin', body)
+        return result
+    }
+)
+
 //reducer function to check what should change into ""user"" state
 const authReducer = createSlice({
     name: 'user',
     initialState,
+    //reducers are usually set of actions
     reducers:{
+        //token fetch from localstorage
+        addToken: (state, action) => {
+            state.token = localStorage.getItem('token')
+        }
     },
     //asyncthunk function should be here
     extraReducers:{
@@ -47,14 +61,29 @@ const authReducer = createSlice({
                 state.error = action.payload.error
             }else{
                 state.error = action.payload.message
+                state.token = action.payload.token
             }
         },
-        // [signinUser.fulfilled]: () => {
-
-        // }
+        [signinUser.pending]: (state, action) => {
+            state.loading = true
+        },
+        [signinUser.fulfilled]: (state, {payload:{error, token}}) => {
+            state.loading = false
+            if (error) {
+                state.error = error
+            } else {
+                state.token = token
+                //token set to localstorage
+                localStorage.setItem('token', token)
+            }
+        },
+        [signinUser.rejected]: (state, action) => {
+            state.loading = false
+            state.error = 'Try Again Please...'
+        }
     }
 
 })
 
-
+export const { addToken } = authReducer.actions
 export default authReducer.reducer

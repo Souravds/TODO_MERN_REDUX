@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { signupUser } from '../reducers/authReducer'
+import { signinUser, signupUser } from '../reducers/authReducer'
 function Auth() {
     const [email, setemail] = useState('')
     const [password, setpassword] = useState('')
@@ -13,9 +13,10 @@ function Auth() {
     const {error, loading} = useSelector(state => state.user)
     
     //signup and signin process
-    const authenticate = () => {
+    const authenticate = (auth) => {
+        console.log(auth);
         if(auth === 'signin'){
-
+            dispatch(signinUser({email, password}))
         }else{
             dispatch(signupUser({email, password}))
         }
@@ -36,7 +37,7 @@ function Auth() {
                 <h6 style={{cursor: 'pointer'}} onClick={() => setauth('signin')}>Already have an accout?</h6>
             }
 
-            <button onClick={() => auth === 'signup' ? authenticate() : ''} className='btn'>{auth}</button>
+            <button onClick={() => authenticate(auth) } className='btn'>{auth}</button>
 
             {loading && (
                 <div class="progress">
