@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../reducers/authReducer';
 import { createtodo, deltetodo, fetchtodos } from '../reducers/todoReducer';
 
 function Todo() {
@@ -20,7 +21,7 @@ function Todo() {
     //Fetch Ones
     useEffect(() => {
         dispatch(fetchtodos())
-    }, [])
+    }, [dispatch])
     
     return (
         <div>
@@ -38,6 +39,8 @@ function Todo() {
                 )}
                 
             </ul>
+
+            <button className='btn'  onClick={() => { dispatch(logout()) }}>Logout</button>
             
         </div>
     )

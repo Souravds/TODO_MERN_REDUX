@@ -38,6 +38,10 @@ const authReducer = createSlice({
         //token fetch from localstorage
         addToken: (state, action) => {
             state.token = localStorage.getItem('token')
+        },
+        logout: (state, action) => {
+            state.token = null
+            localStorage.removeItem('token')
         }
     },
     //asyncthunk function should be here
@@ -76,5 +80,5 @@ const authReducer = createSlice({
 
 })
 
-export const { addToken } = authReducer.actions
+export const { addToken, logout } = authReducer.actions
 export default authReducer.reducer
