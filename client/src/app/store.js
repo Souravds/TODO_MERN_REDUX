@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from '../reducers/authReducer';
+import todoReducer from '../reducers/todoReducer';
 
 //store created by configureStore
 export const store = configureStore({
   reducer: {
-    user: authReducer
+    user: authReducer,
+    todos: todoReducer
   },
 });

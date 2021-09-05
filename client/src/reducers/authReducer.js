@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { fetch2point0 } from '../helpers/fetch2'
 
 //initial user state 
 const initialState = {
@@ -8,17 +9,7 @@ const initialState = {
 }
 
 //fetch function to fetch the server response
-const fetch2point0 = async (api, body, token='') => {
-    const res = await fetch(api,{
-        method: 'post',
-        headers:{
-            'Content-type': 'application/json'
-        },
-        body: JSON.stringify(body)
-    })
-
-    return await res.json()
-} 
+// ==>Replace in helper section
 
 //signup action creator
 export const signupUser = createAsyncThunk(
