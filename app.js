@@ -6,13 +6,13 @@ const jwt = require('jsonwebtoken')
 
 const User = require('./models/user')
 const Todo = require('./models/todo')
-const JWT_SERCRET = 'fsefsdfsdfsdfsdf123'
+const {JWT_SERCRET, MONGOURI }  = require('./config/keys')
 
 const app = express()
 const PORT = 5000
 
 //MONGODB CONNECT by mongoose
-mongoose.connect('mongodb+srv://srv:pVxzFihO1OJ72MOl@cluster0.n8eb8.mongodb.net/tododb?retryWrites=true&w=majority')
+mongoose.connect(MONGOURI)
 
 //IF MONGOOSE CONNECTED LOG TO CONNECTED
 mongoose.connection.on('connected', () => {
@@ -146,6 +146,21 @@ app.post('/signin', async ( req, res ) => {
     } 
     
 })
+
+//RUN REACT CLIENT APPLICATION BY USER REQ
+if(process.env.NODE_ENV == 'production'){
+    const path = require('path')
+
+    //WHEN USER REQ SERVE THE BUILD REACT FILE => index.html
+    app,get('/', (req, res) => {
+        //SPECIFY the css files and others
+        app.use(express.static(path.resolve(__dirname, 'client', 'build')))
+
+        //SPECIFY THE index.html
+        res.send(path.resolve(__dirname, 'client', 'build', 'index.html'))
+    })
+}
+
 
 //INITIALIZE IN WHICH PORT APP CAN LISTEN
 app.listen(PORT, () => {
