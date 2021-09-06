@@ -3,7 +3,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-
+const cors = require('cors')
 const User = require('./models/user')
 const Todo = require('./models/todo')
 const {JWT_SECRET, MONGOURI }  = require('./config/keys')
@@ -26,6 +26,7 @@ mongoose.connection.on('error', (err) => {
 
 //BEFORE GOING THROUGH THE SIGNUP AND SIGNIN PROCESS THIS MIDDLEWARE PARSED ALL THINGS IN JSON
 app.use(express.json())
+app.use(cors())
 
 //MIDDLEWARE TO DETECT IF THE USER IS LOGIN OR NOT
 const requiredLogin = (req, res, next) => {
