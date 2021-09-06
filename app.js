@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken')
 
 const User = require('./models/user')
 const Todo = require('./models/todo')
-const {JWT_SERCRET, MONGOURI }  = require('./config/keys')
+const {JWT_SECRET, MONGOURI }  = require('./config/keys')
 
 const app = express()
 const PORT = 5000
@@ -38,7 +38,7 @@ const requiredLogin = (req, res, next) => {
      //IF THE TOKEN IS INVALID OR NOT
      try{
          //DECODE THE USERID
-         const {userId} = jwt.verify(authorization, JWT_SERCRET)
+         const {userId} = jwt.verify(authorization, JWT_SECRET)
          
          //SET THE REQ USER IF FOUND
          req.userId = userId
@@ -132,7 +132,7 @@ app.post('/signin', async ( req, res ) => {
 
         if (matchPassword) { 
             //TOKEN GENERATE FOR SIGNED USER
-            const token = jwt.sign({userId: existUser._id}, JWT_SERCRET)
+            const token = jwt.sign({userId: existUser._id}, JWT_SECRET)
 
             //RESPONSE WITH TOKEN
             res.status(201).json({token})
