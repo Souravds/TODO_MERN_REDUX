@@ -153,7 +153,7 @@ if(process.env.NODE_ENV == 'production'){
     const path = require('path')
 
     //WHEN USER REQ SERVE THE BUILD REACT FILE => index.html
-    app,get('/', (req, res) => {
+    app.get('/', (req, res) => {
         //SPECIFY the css files and others
         app.use(express.static(path.resolve(__dirname, 'client', 'build')))
 
